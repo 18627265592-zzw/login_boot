@@ -3,6 +3,7 @@ package com.qianyu.util;
 import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -14,7 +15,8 @@ import java.util.regex.Pattern;
 /**
  * Created by admin on 2019/10/9.
  */
-public class JwtUtils {
+@Component
+public class JwtUtils extends RedisKey {
 
     /**
      * 密钥
