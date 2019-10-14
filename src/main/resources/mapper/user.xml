@@ -3,7 +3,7 @@
 <mapper namespace="com.eastday.demo.dao.IUserDao">
 
     <insert id="addUser" parameterType="com.eastday.demo.entity.User" useGeneratedKeys="true" keyProperty="uid">
-        insert into `user`(phone,createTime) value (#{phone},now())
+        insert into `user`(phone,creat_time) value (#{phone},now())
     </insert>
 
     <insert id="addMobile" parameterType="com.eastday.demo.entity.Mobile">
@@ -15,7 +15,7 @@
     </select>
 
     <update id="refreshLastLoginTime" parameterType="com.eastday.demo.entity.User">
-        UPDATE `user` u,mobile m set u.lastLoginTime=now(),u.access_token=#{access_token},m.usable=1 WHERE u.phone=m.phone and m.phone=#{phone}
+        UPDATE `user` u,mobile m set u.last_login_time=now(),u.access_token=#{access_token},m.usable=1 WHERE u.phone=m.phone and m.phone=#{phone}
     </update>
 
     <select id="findUserAndCode" parameterType="java.util.Map" resultType="com.eastday.demo.entity.Mobile">
