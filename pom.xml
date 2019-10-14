@@ -91,17 +91,6 @@
             <version>1.2.28</version>
         </dependency>
 
-       <!-- &lt;!&ndash; spring redis包 &ndash;&gt;
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            &lt;!&ndash;<artifactId>spring-boot-starter-redis</artifactId>&ndash;&gt;
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.session</groupId>
-            <artifactId>spring-session-data-redis</artifactId>
-            <version>2.1.2.RELEASE</version>
-        </dependency>-->
         <!-- jedis 客户端 -->
         <dependency>
             <groupId>redis.clients</groupId>

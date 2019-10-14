@@ -1,24 +1,28 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.qianyu.dao.IUserDao">
+<mapper namespace="com.eastday.demo.dao.IUserDao">
 
-    <insert id="addUser" parameterType="com.qianyu.entity.User" useGeneratedKeys="true" keyProperty="uid">
-        insert into `user`(phone,code,dead_line,usable,createTime) value (#{phone},#{code},#{dead_line},#{usable},now())
+    <insert id="addUser" parameterType="com.eastday.demo.entity.User" useGeneratedKeys="true" keyProperty="uid">
+        insert into `user`(phone,createTime) value (#{phone},now())
     </insert>
 
-    <select id="findUserByPhone" parameterType="String" resultType="com.qianyu.entity.User">
-        SELECT * FROM `user` where phone=#{phone}
+    <insert id="addMobile" parameterType="com.eastday.demo.entity.Mobile">
+        insert into mobile(phone,code,dead_line,usable) values (#{phone},#{code},#{dead_line},#{usable})
+    </insert>
+
+    <select id="findUserByPhone" parameterType="String" resultType="com.eastday.demo.entity.User">
+        SELECT uid,phone FROM `user` where phone=#{phone}
     </select>
 
-    <update id="refreshLastLoginTime" parameterType="String">
-        UPDATE `user` set lastLoginTime=now(),usable=1 WHERE phone=#{phone}
+    <update id="refreshLastLoginTime" parameterType="com.eastday.demo.entity.User">
+        UPDATE `user` u,mobile m set u.lastLoginTime=now(),u.access_token=#{access_token},m.usable=1 WHERE u.phone=m.phone and m.phone=#{phone}
     </update>
 
-    <select id="findUserAndCode" parameterType="com.qianyu.entity.User" resultType="com.qianyu.entity.User">
-        select * FROM `user` where phone=#{phone} and code=#{code}
+    <select id="findUserAndCode" parameterType="java.util.Map" resultType="com.eastday.demo.entity.Mobile">
+        select phone,dead_line,usable FROM mobile where phone=#{phone} and code=#{code}
     </select>
 
-    <update id="updCodeInfo" parameterType="com.qianyu.entity.User">
-        update `user` set code=#{code},dead_line=#{dead_line},usable=#{usable} where phone=#{phone}
+    <update id="updMobileInfo" parameterType="com.eastday.demo.entity.Mobile">
+        update mobile set code=#{code},dead_line=#{dead_line},usable=#{usable} where phone=#{phone}
     </update>
 </mapper>
