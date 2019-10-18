@@ -111,4 +111,17 @@ public class JwtUtils extends ConstantKey {
         }
     }
 
+    //token过期测试
+                    /*try {
+                        User user2=jwt.decode(token,User.class);
+                        if(user2==null){
+                            System.out.println("token过期");
+                        }else{
+                            System.out.println("-----"+user2.getCode());
+                            System.out.println("验证通过");
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }*/
+
 }

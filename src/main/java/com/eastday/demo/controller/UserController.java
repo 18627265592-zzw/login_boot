@@ -1,8 +1,7 @@
 package com.eastday.demo.controller;
 
 import com.eastday.demo.entity.RetDto;
-import com.eastday.demo.entity.User;
-import com.eastday.demo.service.IUserService;
+import com.eastday.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 public class UserController {
 
     @Autowired
-    private IUserService userService;
+    private UserService userService;
 
     /**
      *手机验证码登录

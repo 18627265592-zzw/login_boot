@@ -23,8 +23,12 @@ public class User {
 
     private String access_token;//身份验证秘钥
 
+    private Integer status;//数据状态（0：已删除  1：存在  ）
+
     private String creat_time;//注册时间
 
     private String last_login_time;//最后登录时间
+
+    /*@Transient*/
 
 }
