@@ -1,33 +1,39 @@
   spring:
     server:
          port: 8080
-         context-path: /qy_boot
-    mvc:
-      view:
-         prefix: /WEB-INF/
-         suffix: .jsp
 
     datasource: #数据库连接信息
         username: root
         password: 123456
         url: jdbc:mysql://localhost:3306/test?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&allowMultiQueries=true
-        type: com.alibaba.druid.pool.DruidDataSource #数据源配置
+        #type: com.alibaba.druid.pool.DruidDataSource #数据源配置
         driver-class-name: com.mysql.jdbc.Driver
         filters: stat,wall,log4j
         maxActive: 20 #最大连接数
         initialSize: 5 #初始化数量
         maxWait: 6000
-        minIdle: 5
+        minIdle: 5 #最小空闲连接
 
 
   #配置mybatis
   mybatis:
       mapper-locations: classpath:mapper/*.xml
-      type-aliases-package: com.qianyu.entity
+      type-aliases-package: com.eastday.demo.entity
+      #控制台打印sql
       configuration:
           log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
-  #显示SQL
+
   logging:
     level:
+      #显示SQL
       mapper: debug
+      #打印日志
+      com.eastday.demo: debug
+
+
+#测试数据
+  mobile:
+    name: wendy
+    age: 13
+    url: www.baidu.com

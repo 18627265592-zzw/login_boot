@@ -44,4 +44,20 @@ public interface IUserDao {
      * @param mobile
      */
     public void updMobileInfo(Mobile mobile);
+
+    //---------------------------------------------
+    //图像验证码登录
+
+    /**
+     * 验证用户名密码登录
+     * @param user
+     * @return
+     */
+    public User checkUsernameAndPwd(User user);
+
+    /**
+     * 更新登录时间
+     * @param user
+     */
+    public void updLastLoginTime(User user);
 }

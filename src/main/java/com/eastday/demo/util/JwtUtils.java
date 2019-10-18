@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
  * Created by admin on 2019/10/9.
  */
 @Component
-public class JwtUtils extends RedisKey {
+public class JwtUtils extends ConstantKey {
 
     /**
      * 密钥

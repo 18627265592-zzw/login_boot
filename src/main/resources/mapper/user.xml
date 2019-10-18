@@ -2,27 +2,37 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.eastday.demo.dao.IUserDao">
 
-    <insert id="addUser" parameterType="com.eastday.demo.entity.User" useGeneratedKeys="true" keyProperty="uid">
+    <insert id="addUser" parameterType="User" useGeneratedKeys="true" keyProperty="uid">
         insert into `user`(phone,creat_time) value (#{phone},now())
     </insert>
 
-    <insert id="addMobile" parameterType="com.eastday.demo.entity.Mobile">
+    <insert id="addMobile" parameterType="Mobile">
         insert into mobile(phone,code,dead_line,usable) values (#{phone},#{code},#{dead_line},#{usable})
     </insert>
 
-    <select id="findUserByPhone" parameterType="String" resultType="com.eastday.demo.entity.User">
+    <select id="findUserByPhone" parameterType="String" resultType="User">
         SELECT uid,phone FROM `user` where phone=#{phone}
     </select>
 
-    <update id="refreshLastLoginTime" parameterType="com.eastday.demo.entity.User">
+    <update id="refreshLastLoginTime" parameterType="User">
         UPDATE `user` u,mobile m set u.last_login_time=now(),u.access_token=#{access_token},m.usable=1 WHERE u.phone=m.phone and m.phone=#{phone}
     </update>
 
-    <select id="findUserAndCode" parameterType="java.util.Map" resultType="com.eastday.demo.entity.Mobile">
+    <select id="findUserAndCode" parameterType="java.util.Map" resultType="Mobile">
         select phone,dead_line,usable FROM mobile where phone=#{phone} and code=#{code}
     </select>
 
-    <update id="updMobileInfo" parameterType="com.eastday.demo.entity.Mobile">
+    <update id="updMobileInfo" parameterType="Mobile">
         update mobile set code=#{code},dead_line=#{dead_line},usable=#{usable} where phone=#{phone}
     </update>
+
+    <!--图像验证码-->
+
+    <select id="checkUsernameAndPwd" parameterType="User" resultType="User">
+        SELECT uid,user_name FROM `user` where user_name=#{user_name} and user_pwd=#{user_pwd}
+    </select>
+
+   <update id="updLastLoginTime" parameterType="User">
+       update `user` set last_login_time=now(),access_token=#{access_token} where uid=#{uid}
+   </update>
 </mapper>

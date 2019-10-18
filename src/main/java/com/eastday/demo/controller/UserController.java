@@ -8,8 +8,11 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+
 
 @RestController
+@RequestMapping(value = "/user")
 @EnableAutoConfiguration
 public class UserController {
 
@@ -17,14 +20,14 @@ public class UserController {
     private IUserService userService;
 
     /**
-     *手机号登录
+     *手机验证码登录
      * @param phone
      * @param code
      * @return
      */
-    @RequestMapping(value="login")
-    public RetDto login(String phone,String code){
-        return userService.login(phone,code);
+    @RequestMapping(value="SmsLogin")
+    public RetDto SmsLogin(String phone,String code){
+        return userService.SmsLogin(phone,code);
     }
 
     /**
@@ -35,6 +38,17 @@ public class UserController {
     @RequestMapping(value="sendCode")
     public RetDto sendCode(String phone){
         return userService.sendCode(phone);
+    }
+
+
+    /**
+     * 验证图像验证码
+     * @param code
+     * @return
+     */
+    @RequestMapping(value = "checkKaptcha")
+    public RetDto kaptchaLogin(String code, HttpServletRequest request){
+        return userService.checkKaptcha(code,request);
     }
 
 }
