@@ -84,6 +84,7 @@ public class UserService {
         }
     }
 
+
     public RetDto checkKaptcha(String code, HttpServletRequest request) {
         if(code==null || "".equals(code)){
             return new RetDto(false,1,null);//验证码为空
