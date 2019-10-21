@@ -1,9 +1,10 @@
 package com.eastday.demo.dao;
 
 import com.eastday.demo.entity.Mobile;
-import org.apache.ibatis.annotations.Mapper;
+import tk.mybatis.mapper.common.Mapper;
+import tk.mybatis.mapper.common.MySqlMapper;
 
-@Mapper
-public interface IMobileDao extends tk.mybatis.mapper.common.Mapper<Mobile> {
+
+public interface IMobileDao extends Mapper<Mobile>,MySqlMapper<Mobile> {
 
 }

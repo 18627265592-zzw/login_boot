@@ -24,9 +24,9 @@ public class UserController {
      * @param code
      * @return
      */
-    @RequestMapping(value="SmsLogin")
-    public RetDto SmsLogin(String phone,String code){
-        return userService.SmsLogin(phone,code);
+    @RequestMapping(value="smsLogin")
+    public RetDto smsLogin(String phone,String code){
+        return userService.smsLogin(phone,code);
     }
 
     /**

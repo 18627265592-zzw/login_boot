@@ -38,7 +38,6 @@ public class KaptchaController {
             String createText = defaultKaptcha.createText();
             request.getSession().setAttribute("rightCode", createText);
             log.debug("图像验证码："+request.getSession().getAttribute("rightCode"));
-            System.out.println(request.getSession().getId());
             // 使用生产的验证码字符串返回一个BufferedImage对象并转为byte写入到byte数组中
             BufferedImage challenge = defaultKaptcha.createImage(createText);
             ImageIO.write(challenge, "jpg", jpegOutputStream);

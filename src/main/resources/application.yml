@@ -1,7 +1,6 @@
   spring:
     server:
          port: 8080
-
     datasource: #数据库连接信息
         username: root
         password: 123456
@@ -23,6 +22,12 @@
       configuration:
           log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
+  mapper:
+    mappers:
+      - tk.mybatis.mapper.common.Mapper
+      - tk.mybatis.mapper.common.MySqlMapper
+    not-empty: true
+    identity: MYSQL
 
   logging:
     level:
@@ -30,10 +35,3 @@
       mapper: debug
       #打印日志
       com.eastday.demo: debug
-
-
-#测试数据
-  mobile:
-    name: wendy
-    age: 13
-    url: www.baidu.com

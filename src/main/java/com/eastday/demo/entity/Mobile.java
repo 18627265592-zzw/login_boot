@@ -3,23 +3,30 @@ package com.eastday.demo.entity;
 import lombok.Data;
 import tk.mybatis.mapper.annotation.KeySql;
 
+import javax.persistence.Column;
 import javax.persistence.Id;
+import java.util.Date;
 
 @Data
 public class Mobile {
 
     @Id
     @KeySql(useGeneratedKeys = true)
-    private String pid;
+    private String mid;
 
-    private String phone;//手机号
+    @Column(name="uid")
+    private Integer uid;
 
-    private String code;//短信验证码
+    @Column(name="mobile_phone")
+    private String mobilePhone;//手机号
 
-    private String send_time;//发送时间
+    @Column(name="mobile_code")
+    private String mobileCode;//短信验证码
 
-    private Long send_line;//发送时间戳
+    @Column(name="mobile_send_time")
+    private Date mobileSendTime;//发送时间
 
-    private Integer usable;//是否使用（0：未使用 1：已使用）
+    @Column(name="mobile_usable")
+    private Integer mobileUsable;//是否使用（0：未使用 1：已使用）
 
 }

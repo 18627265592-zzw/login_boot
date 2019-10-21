@@ -5,6 +5,7 @@ import com.eastday.demo.dao.IUserDao;
 import com.eastday.demo.entity.Mobile;
 import com.eastday.demo.entity.RetDto;
 import com.eastday.demo.entity.User;
+import com.eastday.demo.util.DateUtils;
 import com.eastday.demo.util.DesUtil;
 import com.eastday.demo.util.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -12,8 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Service(value = "userService")
@@ -32,8 +34,13 @@ public class UserService {
     @Autowired
     private JwtUtils jwt;
 
-
-    public RetDto SmsLogin(String phone,String code) {
+    /**
+     *手机验证码登录
+     * @param phone
+     * @param code
+     * @return
+     */
+    public RetDto smsLogin(String phone,String code) {
         //验证手机号
         if(!checkPhone(phone)){
             return new RetDto(false,1,null);// 1：手机号有误
@@ -43,24 +50,28 @@ public class UserService {
         if(mobile == null){
             return new RetDto(false,2,null);// 2:验证码有误
         }else{
-            long endT=mobile.getSend_line();//验证码发送时间
-            long startT = (new Date()).getTime();
-            long ss = (startT - endT) / (1000); // 共计秒数
-            int MM = (int) ss / 60; // 共计分钟数
-
+            int MM =(int)DateUtils.getDistanceMinTimes(new Date(),mobile.getMobileSendTime()); // 共计分钟数*/
+            System.out.println("间隔时间------"+MM+"分钟");
             if (MM > jwt.EFFECTIVE_TIME) {// 时间间隔大于五分钟 验证码失效
                 return new RetDto(false,3,null); //3:验证码失效
-            }else if(mobile.getUsable()==1){//验证码已使用
+            }else if(mobile.getMobileUsable()==1){//验证码已使用
                 return new RetDto(false,4,null); //4:验证码已使用
             }else{
-                String access_token = refreshLastLoginTime(phone);
-                updMobileUsable(phone);
-                return new RetDto(true,0,access_token);
+                User user = refreshLastLoginTime(phone);
+                updateMobileUsable(phone);
+                Map<String,Object> map=new HashMap<>();
+                map.put("uid",user.getUid());
+                map.put("accessToken",user.getAccessToken());
+                return new RetDto(true,0,map);
             }
         }
     }
 
-
+    /**
+     * 模拟发送短信验证码
+     * @param phone
+     * @return
+     */
     public RetDto sendCode(String phone) {
         if(!checkPhone(phone)){
             return new RetDto(false,1,null);
@@ -70,21 +81,23 @@ public class UserService {
             //查询数据库手机号是否存在
             User user=findUserByPhone(phone);
             if(user!=null){
-                Mobile mobile=new Mobile();
-                mobile.setPhone(phone);
-                updMobileInfo(mobile,random);
+                updateMobileInfo(phone,random);
                 log.debug("发送成功");
                 return new RetDto(true,0,null);
             }else{
                 log.debug("发送成功");
-                addUser(phone);
-                addMobile(phone,random);
+                int uid = addUser(phone);
+                addMobile(uid,phone,random);
                 return new RetDto(true,0,null);
             }
         }
     }
 
-
+    /**
+     * 验证图像验证码
+     * @param code
+     * @return
+     */
     public RetDto checkKaptcha(String code, HttpServletRequest request) {
         if(code==null || "".equals(code)){
             return new RetDto(false,1,null);//验证码为空
@@ -106,63 +119,61 @@ public class UserService {
 
     public User findUserByPhone(String phone){
         User user=new User();
-        user.setPhone(des.encrypt(phone));
+        user.setUserPhone(des.encrypt(phone));
         return userDao.selectOne(user);
     }
 
-    public void updMobileInfo(Mobile mobile1,String code){
-        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public void updateMobileInfo(String phone,String code){
+        Mobile mobile1=new Mobile();
+        mobile1.setMobilePhone(phone);
         Mobile mobile=mobileDao.selectOne(mobile1);
-        mobile.setCode(code);
-        mobile.setSend_time(sdf.format(new Date()));
-        mobile.setSend_line((new Date()).getTime());
-        mobile.setUsable(0);
+        mobile.setMobileCode(code);
+        mobile.setMobileSendTime(new Date());
+        mobile.setMobileUsable(0);
         mobileDao.updateByPrimaryKeySelective(mobile);
     }
 
-    public void addUser(String phone){
-        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public int addUser(String phone){
         User user=new User();
-        user.setPhone(des.encrypt(phone));
-        user.setCreat_time(sdf.format(new Date()));
+        user.setUserPhone(des.encrypt(phone));
+        user.setUserCreatTime(new Date());
         userDao.insertSelective(user);
+        return user.getUid();
     }
 
-    public void addMobile(String phone,String code){
-        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public void addMobile(int uid,String phone,String code){
         Mobile mobile=new Mobile();
-        mobile.setPhone(phone);
-        mobile.setCode(code);
-        mobile.setSend_time(sdf.format(new Date()));
-        mobile.setSend_line((new Date()).getTime());
-        mobile.setUsable(0);
+        mobile.setUid(uid);
+        mobile.setMobilePhone(phone);
+        mobile.setMobileCode(code);
+        mobile.setMobileSendTime(new Date());
+        mobile.setMobileUsable(0);
         mobileDao.insertSelective(mobile);
     }
 
     public Mobile findUserAndCode(String phone,String code){
         Mobile mobile=new Mobile();
-        mobile.setPhone(phone);
-        mobile.setCode(code);
+        mobile.setMobilePhone(phone);
+        mobile.setMobileCode(code);
         return mobileDao.selectOne(mobile);
     }
 
-    public String refreshLastLoginTime(String phone){
+    public User refreshLastLoginTime(String phone){
         User user = new User();
-        user.setPhone(des.encrypt(phone));
+        user.setUserPhone(des.encrypt(phone));
         User user2 = userDao.selectOne(user);
         String access_token=jwt.encode(user,7200000);//2小时
-        user2.setAccess_token(access_token);
-        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        user2.setLast_login_time(sdf.format(new Date()));
+        user2.setAccessToken(access_token);
+        user2.setUserLastLoginTime(new Date());
         userDao.updateByPrimaryKeySelective(user2);
-        return access_token;
+        return user2;
     }
 
-    public void updMobileUsable(String phone){
+    public void updateMobileUsable(String phone){
         Mobile mobile=new Mobile();
-        mobile.setPhone(phone);
+        mobile.setMobilePhone(phone);
         Mobile mobile2=mobileDao.selectOne(mobile);
-        mobile2.setUsable(1);
+        mobile2.setMobileUsable(1);
         mobileDao.updateByPrimaryKeySelective(mobile2);
     }
 

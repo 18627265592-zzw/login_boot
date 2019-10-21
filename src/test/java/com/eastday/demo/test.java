@@ -1,4 +1,4 @@
-package com.test;
+package com.eastday.demo;
 
 import com.eastday.demo.Application;
 import com.eastday.demo.dao.IUserDao;
@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Calendar;
 import java.util.Date;
 
 
@@ -16,15 +17,8 @@ import java.util.Date;
 @SpringBootTest(classes = Application.class)
 public class test {
 
-
-  @Value("${mobile.name}")
-  private String name;
-
-  @Value("${mobile.age}")
-  private Integer age;
-
-  @Autowired
-  private IUserDao userDao;
+    @Autowired
+   private IUserDao userDao;
 
     @Test
     public void testvg() {
@@ -40,10 +34,6 @@ public class test {
       System.out.println(user1);*/
     }
 
-    @Test
-    public void test2(){
-      System.out.println();
-    }
 
 }
 
