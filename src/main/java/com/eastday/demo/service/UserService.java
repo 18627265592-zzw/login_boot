@@ -177,6 +177,10 @@ public class UserService {
         mobileDao.updateByPrimaryKeySelective(mobile2);
     }
 
+    public User query(Integer id){
+       return userDao.selectByPrimaryKey(2);
+    }
+
 
 
 

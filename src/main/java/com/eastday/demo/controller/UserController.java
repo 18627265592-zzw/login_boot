@@ -1,10 +1,13 @@
 package com.eastday.demo.controller;
 
 import com.eastday.demo.entity.RetDto;
+import com.eastday.demo.entity.User;
 import com.eastday.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -48,6 +51,12 @@ public class UserController {
     @RequestMapping(value = "checkKaptcha")
     public RetDto kaptchaLogin(String code, HttpServletRequest request){
         return userService.checkKaptcha(code,request);
+    }
+
+    @RequestMapping(value = "/{id}",method = RequestMethod.GET)
+    public User query(@PathVariable Integer id,String name){
+        System.out.println(name);
+        return userService.query(id);
     }
 
 }
