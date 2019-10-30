@@ -6,4 +6,5 @@ import tk.mybatis.mapper.common.MySqlMapper;
 
 public interface IUserDao extends Mapper<User>,MySqlMapper<User> {
 
+
 }

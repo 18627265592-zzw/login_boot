@@ -8,6 +8,7 @@ import com.eastday.demo.entity.User;
 import com.eastday.demo.util.DateUtils;
 import com.eastday.demo.util.DesUtil;
 import com.eastday.demo.util.JwtUtils;
+import com.eastday.demo.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,9 @@ public class UserService {
 
     @Autowired
     private JwtUtils jwt;
+
+    @Autowired
+    private StringUtil stringUtil;
 
     /**
      *手机验证码登录
@@ -76,7 +80,7 @@ public class UserService {
         if(!checkPhone(phone)){
             return new RetDto(false,1,null);
         }else{
-            String random = jwt.NumberCode(6);
+            String random = stringUtil.NumberCode(6);
             log.debug("验证码————"+random);
             //查询数据库手机号是否存在
             User user=findUserByPhone(phone);
@@ -110,7 +114,7 @@ public class UserService {
     }
 
     public boolean checkPhone(String phone){
-        if(jwt.isMobile(phone)){
+        if(stringUtil.isMobile(phone)){
             return true;
         }else{
             return false;

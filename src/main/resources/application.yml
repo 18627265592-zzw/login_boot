@@ -14,9 +14,11 @@
         minIdle: 5 #最小空闲连接
 
 
+
   #配置mybatis
   mybatis:
       mapper-locations: classpath:mapper/*.xml
+      #实体类扫描地址
       type-aliases-package: com.eastday.demo.entity
       #控制台打印sql
       configuration:
