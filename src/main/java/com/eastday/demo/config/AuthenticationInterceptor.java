@@ -99,6 +99,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         boolean required() default true;
     }
 
+
     /**
      * 用于登录后才能操作
      * @author zzw
