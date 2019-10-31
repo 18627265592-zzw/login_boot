@@ -3,8 +3,8 @@ package com.eastday.demo.controller;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 
-@RestController
+@Controller
 @Slf4j
 public class KaptchaController {
 
@@ -56,6 +56,18 @@ public class KaptchaController {
         responseOutputStream.flush();
         responseOutputStream.close();
     }
+
+    @RequestMapping("/login")
+    public String login(){
+        return "login";
+    }
+
+    @RequestMapping("/login/success")
+    public String index(){
+        return "index";
+    }
+
+
 
 
 }

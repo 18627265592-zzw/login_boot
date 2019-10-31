@@ -33,34 +33,6 @@ public class JwtUtils extends ConstantKey {
 
 
     /**
-     * 手机号验证
-     * @param  str
-     * @return 验证通过返回true
-     */
-    public static boolean isMobile(final String str) {
-        Pattern p = Pattern.compile("^((13[0-9])|(15[^4])|(18[0-9])|(17[0-9])|(147))\\d{8}$");
-        Matcher m = p.matcher(str);
-        return m.matches();
-    }
-
-    /**
-     * 纯数字随机串码
-     *
-     * @param number 多少位
-     * @return 运行结果
-     */
-    public static String NumberCode(int number) {
-        String str = "";
-        Random r = new Random();
-        int[] ary = {1, 2, 3, 4, 5, 6, 7, 8, 9};
-        for (int i = 0; i < number; i++) {
-            str += ary[r.nextInt(ary.length)];
-        }
-        return str;
-    }
-
-
-    /**
      * 加密
      * @param object 加密数据
      * @param maxTime 有效期（毫秒数）
