@@ -13,7 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,7 +46,7 @@ public class UserService {
      * @param code
      * @return
      */
-    public RetDto smsLogin(String phone,String code) {
+    public RetDto smsLogin(String phone, String code, HttpServletResponse response) {
         //验证手机号
         if(!checkPhone(phone)){
             return new RetDto(false,1,null);// 1：手机号有误
@@ -66,6 +68,10 @@ public class UserService {
                 Map<String,Object> map=new HashMap<>();
                 map.put("uid",user.getUid());
                 map.put("accessToken",user.getAccessToken());
+                //accessToken放入cookie
+                Cookie cookie = new Cookie("accessToken", user.getAccessToken());
+                cookie.setPath("/");
+                response.addCookie(cookie);
                 return new RetDto(true,0,map);
             }
         }
@@ -166,8 +172,8 @@ public class UserService {
         User user = new User();
         user.setUserPhone(des.encrypt(phone));
         User user2 = userDao.selectOne(user);
-        String access_token=jwt.encode(user,7200000);//2小时
-        user2.setAccessToken(access_token);
+        String accessToken=jwt.getToken(user2);
+        user2.setAccessToken(accessToken);
         user2.setUserLastLoginTime(new Date());
         userDao.updateByPrimaryKeySelective(user2);
         return user2;
