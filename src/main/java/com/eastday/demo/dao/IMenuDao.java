@@ -10,4 +10,6 @@ public interface IMenuDao extends Mapper<Menu>,MySqlMapper<Menu> {
 
     List<Menu> selectMenuByUserId(Integer uid);
 
+    List<Menu> selectMenuByRoleId(Integer roleId);
+
 }

@@ -28,7 +28,7 @@ public class JwtUtils extends ConstantKey {
         long currentTime = System.currentTimeMillis() + 60* 60 * 1000 * 2;//一小时有效时间
         Date end = new Date(currentTime);
         String token = "";
-
+        //用户手机号作为秘钥
         token = JWT.create().withAudience(user.getUid().toString()).withIssuedAt(start).withExpiresAt(end)
                 .sign(Algorithm.HMAC256(user.getUserPhone()));
         return token;

@@ -8,5 +8,10 @@
             select role_id from user_role where user_id=#{uid}))
     </select>
 
+    <select id="selectMenuByRoleId" parameterType="int" resultType="Menu">
+        select menu_id menuId,menu_name menuName,menu_code menuCode,parent_id parentId,url,lever from menu where menu_id in (
+          select menu_id from role_menu where role_id =#{roleId})
+    </select>
+
 
 </mapper>
