@@ -3,13 +3,15 @@ package com.eastday.demo.controller;
 import com.eastday.demo.config.Authentication;
 import com.eastday.demo.config.UserLoginToken;
 import com.eastday.demo.entity.Menu;
-import com.eastday.demo.entity.Role;
+import com.eastday.demo.entity.RoleAndMenu;
 import com.eastday.demo.service.MenuService;
 import com.eastday.demo.util.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -58,14 +60,14 @@ public class MenuController {
 
     /**
      * 新增角色
-     * @param role 角色对象
+     * @param roleName 角色名称
      * @return 'true':新增成功  'false':新增失败
      */
     @PostMapping(value = "/role")
     @UserLoginToken
     @Authentication(value = "user_permission")
-    public String addRole(Role role){
-        return menuService.addRole(role);
+    public String addRole(String roleName){
+        return menuService.addRole(roleName);
     }
 
     /**
@@ -84,16 +86,39 @@ public class MenuController {
     /**
      * 角色权限调整
      * @param roleId 角色id
-     * @param roleMenuIds 权限id字符串，以','分割
-     * @return
+     * @param menuIds 权限id字符串，以','分割
+     * @return true':调整成功  'false':调整失败
      */
-    public String updateMenuByRoleId(Integer roleId,String roleMenuIds){
-        String[] ids =roleMenuIds.split(",");
-        return null;
+    @PostMapping(value = "/role/{roleId}/{menuIds}")
+    @UserLoginToken
+    @Authentication(value = "user_permission")
+    public String updateMenuByRoleId(@PathVariable Integer roleId,@PathVariable String menuIds){
+        String[] ids =menuIds.split(",");
+        List<RoleAndMenu> list = new ArrayList<>();
+        for(int i=0;i<ids.length;i++){
+            RoleAndMenu roleAndMenu = new RoleAndMenu();
+            roleAndMenu.setMenuId(Integer.parseInt(ids[i]));
+            roleAndMenu.setRoleId(roleId);
+            roleAndMenu.setCreateTime(new Date());
+            list.add(roleAndMenu);
+        }
+        return menuService.updateMenuByRoleId(list);
     }
 
 
-    //用户角色调整
+    /**
+     * 用户角色调整
+     * @param userId 用户id
+     * @param roleId 角色id
+     * @return true':调整成功  'false':调整失败
+     */
+    @PutMapping(value = "/role/{userId}/{roleId}")
+    @UserLoginToken
+    @Authentication(value = "user_permission")
+    public String updateUserAndRole(@PathVariable Integer userId,@PathVariable Integer roleId){
+        return menuService.updateUserAndRole(userId,roleId);
+    }
+
 
 
 }

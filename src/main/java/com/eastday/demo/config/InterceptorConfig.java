@@ -54,6 +54,7 @@ public class InterceptorConfig implements HandlerInterceptor {
                 String userId;
                 try {
                     userId = jwt.getTokenUserId();
+                    System.out.println("_________________"+userId);
                 } catch (JWTDecodeException j) {
                     throw new RuntimeException("401");
                 }

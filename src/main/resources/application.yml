@@ -23,7 +23,7 @@
       #控制台打印sql
       configuration:
           log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-
+#通用mapper
   mapper:
     mappers:
       - tk.mybatis.mapper.common.Mapper

@@ -1,25 +1,26 @@
 package com.eastday.demo.entity;
 
+
 import lombok.Data;
 import tk.mybatis.mapper.annotation.KeySql;
 
 import javax.persistence.*;
 import java.util.Date;
 
-@Table(name = "role")
 @Data
-public class Role {
+@Table(name = "user_role")
+public class UserAndRole {
 
     @Id
     @KeySql(useGeneratedKeys = true)
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private Integer roleId;//主键
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-    @Column(name = "role_name")
-    private String roleName;//角色名
+    @Column(name = "user_id")
+    private Integer userId;//用户id
 
-    /*@Column(name = "role_code")
-    private String roleCode;//角色代码*/
+    @Column(name = "role_id")
+    private Integer roleId;//角色id
 
     @Column(name = "create_time")
     private Date createTime;//创建时间

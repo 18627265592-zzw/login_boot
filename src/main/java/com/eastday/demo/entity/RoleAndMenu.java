@@ -6,21 +6,22 @@ import tk.mybatis.mapper.annotation.KeySql;
 import javax.persistence.*;
 import java.util.Date;
 
-@Table(name = "role")
 @Data
-public class Role {
+@Table(name = "role_menu")
+public class RoleAndMenu {
 
     @Id
     @KeySql(useGeneratedKeys = true)
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private Integer roleId;//主键
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-    @Column(name = "role_name")
-    private String roleName;//角色名
+    @Column(name = "role_id")
+    private Integer roleId;//角色表id
 
-    /*@Column(name = "role_code")
-    private String roleCode;//角色代码*/
+    @Column(name = "menu_id")
+    private Integer menuId;//权限表id
 
     @Column(name = "create_time")
     private Date createTime;//创建时间
+
 }

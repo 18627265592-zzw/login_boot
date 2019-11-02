@@ -1,16 +1,17 @@
 package com.eastday.demo.service;
 
 import com.eastday.demo.dao.IMenuDao;
+import com.eastday.demo.dao.IRoleAndMenuDao;
 import com.eastday.demo.dao.IRoleDao;
+import com.eastday.demo.dao.IUserAndRoleDao;
 import com.eastday.demo.entity.Menu;
 import com.eastday.demo.entity.Role;
+import com.eastday.demo.entity.RoleAndMenu;
+import com.eastday.demo.entity.UserAndRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service(value = "menuService")
 public class MenuService {
@@ -20,6 +21,12 @@ public class MenuService {
 
     @Autowired
     private IRoleDao roleDao;
+
+    @Autowired
+    private IRoleAndMenuDao roleAndMenuDao;
+
+    @Autowired
+    private IUserAndRoleDao userAndRoleDao;
 
     public List<Menu> findMenuByUserId(Integer uid){
         List<Menu> allMenus = menuDao.selectMenuByUserId(uid);
@@ -65,9 +72,12 @@ public class MenuService {
         return map;
     }
 
-    public String addRole(Role role){
+    public String addRole(String roleName){
         String returnstr="true";
         try {
+            Role role = new Role();
+            role.setRoleName(roleName);
+            role.setCreateTime(new Date());
             roleDao.insertSelective(role);
         }catch (Exception e){
             returnstr="false";
@@ -80,5 +90,42 @@ public class MenuService {
         return menuDao.selectMenuByRoleId(roleId);
     }
 
+    public String updateMenuByRoleId(List<RoleAndMenu> list){
+        String returnstr="true";
+        try {
+            RoleAndMenu roleAndMenu = new RoleAndMenu();
+            //取roleId
+            roleAndMenu.setRoleId(list.get(0).getRoleId());
+            //先删除角色对应所有权限
+            roleAndMenuDao.delete(roleAndMenu);
+            //重新添加角色权限
+            roleAndMenuDao.insertList(list);
+        }catch (Exception e){
+            returnstr="false";
+            e.printStackTrace();
+        }
+        return returnstr;
+    }
+
+
+    public String updateUserAndRole(Integer userId,Integer roleId){
+        String returnstr="true";
+        try {
+            UserAndRole userAndRole = new UserAndRole();
+            userAndRole.setUserId(userId);
+            UserAndRole userAndRole1 = userAndRoleDao.selectOne(userAndRole);
+            if(userAndRole1==null){
+                userAndRole.setRoleId(roleId);
+                userAndRoleDao.insertSelective(userAndRole);
+            }else{
+                userAndRoleDao.updateByPrimaryKeySelective(userAndRole1);
+            }
+
+        }catch (Exception e){
+            returnstr="false";
+            e.printStackTrace();
+        }
+        return returnstr;
+    }
 
 }
