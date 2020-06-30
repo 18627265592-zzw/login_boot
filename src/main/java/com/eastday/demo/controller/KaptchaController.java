@@ -1,5 +1,6 @@
 package com.eastday.demo.controller;
 
+import com.eastday.demo.util.ImageUtil;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +11,10 @@ import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 
 @Controller
 @Slf4j
@@ -57,14 +60,17 @@ public class KaptchaController {
         responseOutputStream.close();
     }
 
-    @RequestMapping("/login")
-    public String login(){
-        return "login";
-    }
+    @RequestMapping("/getKaptcha1")
+    public void valicode(HttpServletResponse response, HttpSession session) throws Exception {
 
-    @RequestMapping("/login/success")
-    public String index(){
-        return "index";
+        Object[] objs = ImageUtil.createImage();
+        //将验证码存入Session
+        session.setAttribute("yzm", ((String) objs[0]).toLowerCase());
+        //将图片输出给浏览器
+        BufferedImage image = (BufferedImage) objs[1];
+        response.setContentType("image/png");
+        OutputStream os = response.getOutputStream();
+        ImageIO.write(image, "png", os);
     }
 
 

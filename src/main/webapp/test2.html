@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=no"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+    <title>无标题文档</title>
+	<link href="lib/twitter-bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="disk/slidercaptcha.css" rel="stylesheet" />
+    <script src="lib/jquery/jquery.min.js"></script>
+    <script src="lib/twitter-bootstrap/js/bootstrap.bundle.js"></script>
+	<style>
+
+        .slidercaptcha {
+            margin: 0 auto;
+            width: 314px;
+            height: 286px;
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.125);
+            margin-top: 40px;
+        }
+
+            .slidercaptcha .card-body {
+                padding: 1rem;
+            }
+
+          
+
+            .slidercaptcha.card .card-header {
+                background-image: none;
+                background-color: rgba(0, 0, 0, 0.03);
+            }
+
+    
+    </style>
+    <script type="text/javascript">
+        //移动端判断rem
+        var Fun_resize =function (){
+            var bodyWidth=$(window).width();
+            $("html").css({"font-size":100*bodyWidth/750+"px"});
+        }
+
+
+    </script>
+</head>
+
+<body>
+<div class="slidercaptcha card">
+		<div class="card-header">
+			<span>请完成安全验证!</span>
+		</div>
+    <div class="card-body">
+        <div id="imgcaptcha" style="position: relative; width: 280px; margin: 0px auto;">
+            <img id="aaa" width="278" height="155"/>
+            <i class="refreshIcon fa fa-redo"></i>
+            <img id="bbb" width="63" height="155" style="top: 5px;left: 0px;" class="block"/>
+            <div class="sliderContainer">
+                <div class="sliderbg"></div>
+                <div class="sliderMask" style="width: 0px">
+                    <div class="slider" style="left: 0px;">
+                        <i class="fa fa-arrow-right sliderIcon"></i>
+                    </div>
+                </div>
+                <span class="sliderText" data-text="向右滑动填充拼图">向右滑动填充拼图</span>
+            </div>
+        </div>
+    </div>
+	</div>
+<script type="text/javascript">
+    var originX=0,moveX=0;
+
+
+$(function () {
+   /* document.addEventListener('mousemove', handleDragMove);
+    document.addEventListener('touchmove', handleDragMove);*/
+    initImageValidate();
+    originX=$(".slider").offset().left;
+    /* 初始化按钮拖动事件 */
+    // 鼠标点击事件
+    $(".sliderMask").mousedown(function(){
+        // 鼠标移动事件
+        document.onmousemove = function(ev) {
+            var eventX = ev.clientX;
+            moveX = eventX - originX;
+            if (moveX < 0 || moveX + 40 > 280){
+                console.log("false")
+                return false;
+            }
+            $(".slider").css("left",moveX+"px");
+            $("#bbb").css("left",moveX+"px");
+            $(".sliderContainer").addClass('sliderContainer_active');
+            $(".sliderMask").css("width",(moveX + 4) + 'px');
+        };
+        // 鼠标松开事件
+        document.onmouseup=function(){
+            document.onmousemove=null;
+            $(".sliderContainer").removeClass('sliderContainer_active');
+            checkImageValidate();
+        };
+    });
+
+    //移动端触摸事件
+    //手指触摸屏幕时触发事件
+   /* $('body').on('touchstart', function () {
+        $('p').css({'color': '#f00'});
+        console.log("用户手指触摸到屏幕...");
+    });*/
+    //手指在屏幕上移动时触发
+    $('.sliderMask').on('touchmove', function (ev) {
+        var eventX = ev.touches[0].clientX;
+        console.log(ev.touches[0])
+        moveX = eventX - originX;
+        if (moveX < 0 || moveX + 40 > 280){
+            console.log("false")
+            return false;
+        }
+        $(".slider").css("left",moveX+"px");
+        $("#bbb").css("left",moveX+"px");
+        $(".sliderContainer").addClass('sliderContainer_active');
+        $(".sliderMask").css("width",(moveX + 4) + 'px');
+    });
+    //手指离开屏幕时触发
+    $('.sliderMask').on('touchend', function () {
+        $(".sliderContainer").removeClass('sliderContainer_active');
+        checkImageValidate();
+    });
+
+})
+
+    //获取滑块验证码
+function initImageValidate(){
+    $.ajax({
+        async : false,
+        type : "POST",
+        url : "/img/createImgValidate",
+        dataType: "json",
+        data:{
+        },
+        success : function(data) {
+            if(!isEmpty(data)){
+                // 设置图片的src属性
+                $("#aaa").attr("src", "data:image/png;base64,"+data.oriCopyImage);
+                $("#bbb").attr("src", "data:image/png;base64,"+data.newImage);
+            }else{
+                console.log("失败")
+            }
+        },
+        error : function(e) {
+            console.log("error")
+          /*  initImageValidate()*/
+        }
+    });
+}
+
+    // 校验滑块验证码
+    function checkImageValidate(){
+        $.ajax({
+            async : false,
+            type : "POST",
+            url : "/img/checkImgValidate",
+            dataType: "json",
+            data:{
+                moveLength:moveX
+            },
+            success : function(data) {
+                console
+                if(!isEmpty(data) && data.errcode == 0){
+                    console.log("成功")
+                    $(".sliderContainer").addClass('sliderContainer_success');
+
+                }else{
+                    $(".sliderContainer").addClass('sliderContainer_fail');
+                    setTimeout(function () {
+                        failReset();
+                    }, 1000);
+                }
+            },
+            error : function() {}
+        });
+    }
+
+    //失败重置
+    function failReset() {
+        $(".slider").css("left","0px");
+        $("#bbb").css("left","0px");
+        $(".sliderContainer").removeClass('sliderContainer_fail');
+        $(".sliderMask").css("width",'0px');
+        $(".sliderText").text("再试一次");
+    }
+
+//判断字符是否为空的方法
+function isEmpty(obj){
+    var reg = /^\s*$/;
+    if(typeof obj == undefined || obj == null || reg.test(obj)){
+        return true;
+    }else{
+        return false;
+    }
+}
+    
+</script>
+</body>
+</html>

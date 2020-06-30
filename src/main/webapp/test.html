@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>图片验证</title>
+	<link rel="stylesheet" type="text/css" href="bootstrap.min.css" />
+	<link rel="stylesheet" type="text/css" href="imageValidate.css" />
+	<script src="jquery-3.4.0.min.js"></script>
+</head>
+<body>
+<div id="container">
+	<div class="imageDiv">
+		<img id="validateImage" src=""/>
+		<img id="slideImage" src=""/>
+	</div>
+	<div class="resultDiv">
+		<button class="btn btn-success" onclick="exchange();"><i class="fas fa-redo"></i>&nbsp;换一组</button>
+		<span id="operateResult"></span>
+	</div>
+	<div>
+		<div id="sliderOuter">
+			<div id="dragDiv">拖动滑块完成拼图</div>
+			<div id="sliderInner">
+				<i class="fas fa-angle-double-right"></i>
+				<div class="coverIcon"></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+</body>
+<script type="text/javascript">
+    var left = 0,moveleft=0;
+
+   $(function(){
+        // 初始化图片验证码
+        initImageValidate();
+       moveleft=$("#sliderInner").offset().left;
+        /* 初始化按钮拖动事件 */
+        // 鼠标点击事件
+        $("#sliderInner").mousedown(function(){
+            // 鼠标移动事件
+            document.onmousemove = function(ev) {
+                left = ev.clientX;
+
+                //console.log(moveleft)
+				var minx=moveleft;
+				var maxx=moveleft+590-94;
+                if(left >= minx && left <= maxx){
+                    //console.log(left)
+                    $("#sliderInner").css("left",(left-moveleft)+"px");
+                    $("#slideImage").css("left",(left-moveleft)+"px");
+                }
+            };
+            // 鼠标松开事件
+            document.onmouseup=function(){
+                document.onmousemove=null;
+                checkImageValidate();
+            };
+        });
+
+    });
+
+   function initImageValidate(){
+       $.ajax({
+           async : false,
+           type : "POST",
+           url : "/img/createImgValidate",
+           dataType: "json",
+           data:{
+           },
+           success : function(data) {
+               if(!isEmpty(data)){
+                   // 设置图片的src属性
+                   $("#validateImage").attr("src", "data:image/png;base64,"+data.oriCopyImage);
+                   $("#slideImage").attr("src", "data:image/png;base64,"+data.newImage);
+               }else{
+                   console.log("失败")
+               }
+           },
+           error : function() {}
+       });
+   }
+
+   function exchange(){
+       initImageValidate();
+   }
+
+   // 校验
+   function checkImageValidate(){
+       $.ajax({
+           async : false,
+           type : "POST",
+           url : "/img/checkImgValidate",
+           dataType: "json",
+           data:{
+               moveLength:left-moveleft
+           },
+           success : function(data) {
+               console.log(data)
+               if(isEmpty(data) && data.errcode == 0){
+                   $("#operateResult").html(data.info).css("color","#28a745");
+				   console.log("校验成功")
+               }else{
+                   $("#operateResult").html(data.info).css("color","#dc3545");
+                   // 验证未通过，将按钮和拼图恢复至原位置
+                   $("#sliderInner").animate({"left":"0px"},200);
+                   $("#slideImage").animate({"left":"0px"},200);
+               }
+           },
+           error : function() {}
+       });
+   }
+
+    //判断字符是否为空的方法
+    function isEmpty(obj){
+        var reg = /^\s*$/;
+        if(typeof obj == undefined || obj == null || reg.test(obj)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+</script>
+
+</html>
